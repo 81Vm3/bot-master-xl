@@ -1,0 +1,15 @@
+[submodule "lib/bullet"]
+	path = lib/bullet
+	url = https://github.com/bulletphysics/bullet3.git
+[submodule "lib/libhv"]
+	path = lib/libhv
+	url = https://github.com/ithewei/libhv.git
+[submodule "lib/spdlog"]
+	path = lib/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "lib/glm"]
+	path = lib/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "lib/sqlite"]
+	path = lib/sqlite
+	url = git@github.com:81Vm3/sqlite.git
