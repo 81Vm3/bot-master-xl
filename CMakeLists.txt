@@ -18,7 +18,7 @@ add_subdirectory(lib/glm)
 add_subdirectory(lib/spdlog)
 
 # Enable SSL for libhv
-add_definitions(-DWITH_OPENSSL)
+#add_definitions(-DWITH_OPENSSL)
 add_subdirectory(lib/libhv)
 add_subdirectory(lib/sqlite)
 
@@ -29,9 +29,9 @@ set (BUILD_EXTRAS OFF CACHE BOOL "Set when you want to build the extras")
 set (BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Set when you want to build the OpenGL3+ demos")
 set (BUILD_UNIT_TESTS OFF CACHE BOOL "Build Unit Tests")
 add_subdirectory (
-        ${CMAKE_CURRENT_SOURCE_DIR}/lib/bullet3
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib/bullet
 )
-set (BULLET_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/lib/bullet3")
+set (BULLET_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/lib/bullet")
 find_path(BULLET_INCLUDE_DIRS NAMES btBulletCollisionCommon.h
         HINTS
         ${BULLET_ROOT}/include
@@ -47,7 +47,7 @@ set (CA_DATABASE_VERSION 2)
 add_definitions (-DCA_VERSION="${CA_VERSION}" -DCA_DATABASE_VERSION=${CA_DATABASE_VERSION})
 
 # Find required packages
-find_package(OpenSSL REQUIRED)
+#find_package(OpenSSL REQUIRED)
 
 add_executable(BotMasterXL ${SOURCES})
 
@@ -63,7 +63,7 @@ target_include_directories(BotMasterXL PRIVATE
         lib/glm
         lib/spdlog/include
         lib/sqlite
-        lib/bullet3/src
+        lib/bullet/src
 )
 target_link_libraries(BotMasterXL
         RakNet
@@ -77,8 +77,6 @@ target_link_libraries(BotMasterXL
         BulletCollision
         LinearMath
         Bullet3Common
-        OpenSSL::SSL
-        OpenSSL::Crypto
         ${CMAKE_THREAD_LIBS_INIT}
 )
 target_compile_options(BotMasterXL PRIVATE -static-libgcc -static-libstdc++)

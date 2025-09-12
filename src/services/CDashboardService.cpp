@@ -8,6 +8,7 @@
 #include <sqlite3.h>
 
 #include "../utils/JsonResponse.h"
+#include "../utils/timeutil.h"
 #include "../database/DBSchema.h"
 #include "../CApp.h"
 #include "../core/CPersistentDataStorage.h"
@@ -122,18 +123,12 @@ int CDashboardService::get_server_stats(HttpRequest* req, HttpResponse* resp) {
                 std::string lastUpdateStr = row.getString(DB::Servers::LAST_UPDATE);
                 
                 if (!lastUpdateStr.empty()) {
-                    auto now = std::chrono::system_clock::now();
-                    auto lastUpdate = std::chrono::system_clock::from_time_t(
-                        std::stoll(lastUpdateStr));
-                    auto timeDiff = std::chrono::duration_cast<std::chrono::minutes>(now - lastUpdate);
-                    
-                    if (timeDiff.count() <= 5) {
+                    if (TimeUtil::isWithinMinutes(lastUpdateStr, 5)) {
                         online_servers++;
                     } else {
                         offline_servers++;
                     }
                 } else {
-                    // No last update time means server is likely offline
                     offline_servers++;
                 }
             } catch (const std::exception& e) {

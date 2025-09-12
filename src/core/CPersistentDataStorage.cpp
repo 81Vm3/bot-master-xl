@@ -223,7 +223,7 @@ bool CPersistentDataStorage::loadObjects() {
                 bot->setPort(server_info.second);
             }
             // Note: invulnerable property could be added to CBot if needed
-            
+
             vBots.push_back(bot);
             
             // Add to hash map for O(1) lookup by UUID
@@ -250,6 +250,7 @@ bool CPersistentDataStorage::loadObjects() {
             std::string api_key = row.getString(DB::LLMProviders::API_KEY);
             std::string base_url = row.getString(DB::LLMProviders::BASE_URL);
             std::string model = row.getString(DB::LLMProviders::MODEL);
+            std::string created_at = row.getString(DB::LLMProviders::CREATED_AT);
             
             if (name.empty() || api_key.empty() || base_url.empty() || model.empty()) {
                 spdlog::warn("Skipping invalid LLM provider record: name='{}', base_url='{}'", name, base_url);
@@ -258,6 +259,7 @@ bool CPersistentDataStorage::loadObjects() {
             
             auto llmProvider = std::make_shared<CLLMProvider>(id, name, api_key, base_url, model);
             llmProvider->setDbId(id);
+            llmProvider->setCreatedAt(created_at);
             
             vLLMProvider.push_back(llmProvider);
             
