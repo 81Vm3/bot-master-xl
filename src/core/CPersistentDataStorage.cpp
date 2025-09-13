@@ -104,6 +104,7 @@ bool CPersistentDataStorage::loadDatabase() {
                 server_id INTEGER NOT NULL,
                 invulnerable BOOLEAN NOT NULL DEFAULT 0,
                 system_prompt TEXT DEFAULT '',
+                password TEXT DEFAULT '',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (server_id) REFERENCES servers(id) ON DELETE CASCADE
             ))"},

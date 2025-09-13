@@ -137,7 +137,7 @@ void CServerQuerier::queryServer(CServer* server) {
             // Update last_update timestamp
             server->setLastUpdate(CPersistentDataStorage::getCurrentTimeString());
             
-            // Update in database
+            // Update in database (including player count)
             updateServerInDatabase(server);
             
             // Call callback if set
@@ -145,8 +145,9 @@ void CServerQuerier::queryServer(CServer* server) {
                 onServerUpdated(server);
             }
             
-            spdlog::debug("Server {}:{} updated successfully", 
-                         server->getHost(), server->getPort());
+            spdlog::debug("Server {}:{} updated successfully - Players: {}/{}", 
+                         server->getHost(), server->getPort(), 
+                         server->getPlayers(), server->getMaxPlayers());
         } else {
             // Call offline callback if set
             if (onServerOffline) {
@@ -172,6 +173,8 @@ void CServerQuerier::updateServerInDatabase(CServer* server) {
           .set(DB::Servers::NAME, server->getName())
           .set(DB::Servers::GAMEMODE, server->getMode())
           .set(DB::Servers::LANGUAGE, server->getLanguage())
+          .set(DB::Servers::PLAYERS, std::to_string(server->getPlayers()))
+          .set(DB::Servers::MAX_PLAYERS, std::to_string(server->getMaxPlayers()))
           .set(DB::Servers::LAST_UPDATE, server->getLastUpdate())
           .where(DB::Servers::ID + " = " + std::to_string(server->getDbId()));
         

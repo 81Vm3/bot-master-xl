@@ -120,7 +120,13 @@ int CBotService::create_bot(HttpRequest* req, HttpResponse* resp) {
         int server_id = body["server_id"];
         bool invulnerable = body.value("invulnerable", false);
         std::string system_prompt = body.value("system_prompt", "");
+        std::string password = body.value("password", "");
         int llm_provider_id = body.value("llm_provider_id", -1);
+
+        auto database = CApp::getInstance()->getDatabase();
+        if (!database) {
+            return resp->Json(JsonResponse::internal_error());
+        }
 
         // Validate the server exists
         sql::SelectModel select_model;
@@ -132,15 +138,13 @@ int CBotService::create_bot(HttpRequest* req, HttpResponse* resp) {
         // Create CBot instance (UUID will be auto-generated in CRakBot constructor)
         auto bot = std::make_shared<CBot>(name);
         bot->setSystemPrompt(system_prompt);
+
+        // set password
+        bot->setPassword(password);
         
         // Get the auto-generated UUID
         std::string uuid = bot->getUuid();
-        
-        auto database = CApp::getInstance()->getDatabase();
-        if (!database) {
-            return resp->Json(JsonResponse::internal_error());
-        }
-        
+
         // Check if server exists
         std::string host;
         int port = 0;
@@ -171,6 +175,7 @@ int CBotService::create_bot(HttpRequest* req, HttpResponse* resp) {
           .insert(DB::Bots::SERVER_ID, server_id)
           .insert(DB::Bots::INVULNERABLE, invulnerable ? 1 : 0)
           .insert(DB::Bots::SYSTEM_PROMPT, system_prompt)
+          .insert(DB::Bots::PASSWORD, password)
           .into(DB::Tables::BOTS);
         
         char* error_msg = nullptr;
@@ -644,7 +649,7 @@ bool CBotService::deleteLLMSessionForBot(const std::string& botUuid) {
     // Check if bot has an active LLM session using session manager
     CLLMBotSession* existingSession = llmSessionManager->getLLMSessionFromBot(botUuid);
     if (existingSession == nullptr) {
-        CLogger::getInstance()->api->warn("Bot {} does not have an active LLM session", botUuid);
+        //CLogger::getInstance()->api->warn("Bot {} does not have an active LLM session", botUuid);
         return true; // Not an error - bot simply doesn't have a session
     }
     
