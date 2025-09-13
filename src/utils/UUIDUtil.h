@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-class UUID {
+class UUIDUtil {
 public:
     /**
      * @brief Generates a uuid string in the form
@@ -20,7 +20,7 @@ public:
      */
     static std::string generate_uuid() {
         std::stringstream hexstream;
-        hexstream << UUID::generate_hex(8);
+        hexstream << UUIDUtil::generate_hex(8);
         return hexstream.str();
     }
 

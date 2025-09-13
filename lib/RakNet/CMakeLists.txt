@@ -145,12 +145,3 @@ target_compile_definitions(RakNet PRIVATE
     $<$<CONFIG:Debug>:_DEBUG>
 )
 
-if(MSVC)
-    target_compile_options(RakNet PRIVATE /W3 /std:c++14)
-else()
-    target_compile_options(RakNet PRIVATE -Wall -Wextra -fno-strict-aliasing -fwrapv -fstack-protector-strong)
-    if(UNIX AND NOT APPLE)
-        target_compile_options(RakNet PRIVATE -D_GNU_SOURCE -pthread)
-    endif()
-endif()
-

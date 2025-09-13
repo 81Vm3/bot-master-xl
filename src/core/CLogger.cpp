@@ -29,11 +29,18 @@ void CLogger::init() {
     auto api_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     auto llm_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
-    // Set color per logger name
+    // Set color per logger name using Windows console color attributes
+#ifdef WIN64
+    bot_sink->set_color(spdlog::level::info, 0x0B);      // cyan (FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY)
+    system_sink->set_color(spdlog::level::info, 0x0A);   // green (FOREGROUND_GREEN | FOREGROUND_INTENSITY)
+    api_sink->set_color(spdlog::level::info, 0x0E);      // yellow (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY)
+    llm_sink->set_color(spdlog::level::info, 0x0D);      // magenta (FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY)
+#else
     bot_sink->set_color(spdlog::level::info, bot_sink->cyan);
     system_sink->set_color(spdlog::level::info, system_sink->green);
     api_sink->set_color(spdlog::level::info, system_sink->yellow);
     llm_sink->set_color(spdlog::level::info, system_sink->magenta);
+#endif
 
     // Create loggers with their respective sinks
     bot = std::make_shared<spdlog::logger>("bot", bot_sink);

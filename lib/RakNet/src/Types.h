@@ -589,8 +589,8 @@ Add memory that is allocated on a 32-bit boundary
 and has at least one block.
 */
 #define MEMADD32(ptr, len, val) { \
-	register u32 *__data = (u32*)(ptr); /* pointer to data to clear */ \
-	register s32 __length = (len); /* number of 32-bit blocks */ \
+	/*register*/ u32 *__data = (u32*)(ptr); /* pointer to data to clear */ \
+	/*register*/ s32 __length = (len); /* number of 32-bit blocks */ \
 	\
 	switch (__length % 8) \
 { \

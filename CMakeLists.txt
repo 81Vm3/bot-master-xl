@@ -3,6 +3,20 @@ project(BotMasterXL)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # Fix endian macro conflicts for cross-compilation
+    add_definitions(-DLITTLE_ENDIAN=1234)
+    add_definitions(-DBIG_ENDIAN=4321)
+    add_definitions(-DBYTE_ORDER=1234)
+    # Fix std::byte conflict with Windows headers
+    add_definitions(-D_HAS_STD_BYTE=0)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # iconv port
+    add_subdirectory(lib/win-iconv)
+endif ()
+
 file(GLOB_RECURSE SOURCES
         "src/*.cpp"
         "src/*.c"
@@ -39,16 +53,10 @@ find_path(BULLET_INCLUDE_DIRS NAMES btBulletCollisionCommon.h
         PATH_SUFFIXES bullet
 )
 
-# include (FindBullet)
-
 # ColAndreas
 set (CA_VERSION "v1.4.0")
 set (CA_DATABASE_VERSION 2)
 add_definitions (-DCA_VERSION="${CA_VERSION}" -DCA_DATABASE_VERSION=${CA_DATABASE_VERSION})
-
-# Find required packages
-#find_package(OpenSSL REQUIRED)
-
 add_executable(BotMasterXL ${SOURCES})
 
 # Set output directory for the executable
@@ -65,11 +73,18 @@ target_include_directories(BotMasterXL PRIVATE
         lib/sqlite
         lib/bullet/src
 )
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_include_directories(BotMasterXL PRIVATE
+            lib/win-iconv
+    )
+endif ()
+
 target_link_libraries(BotMasterXL
         RakNet
         glm::glm
         spdlog
-        hv
+        hv_static
         sqlite
         BulletInverseDynamics
         BulletSoftBody
@@ -77,13 +92,17 @@ target_link_libraries(BotMasterXL
         BulletCollision
         LinearMath
         Bullet3Common
-        ${CMAKE_THREAD_LIBS_INIT}
 )
-target_compile_options(BotMasterXL PRIVATE -static-libgcc -static-libstdc++)
-
-if(UNIX AND NOT APPLE)
+target_compile_options(BotMasterXL PRIVATE -static -static-libgcc -static-libstdc++ -O2)
+target_link_options(BotMasterXL PRIVATE -static -static-libgcc -static-libstdc++)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    message("---------Compiling on Windows---------")
+    target_link_libraries(BotMasterXL
+            ws2_32
+            iconv_static
+    )
+elseif(UNIX AND NOT APPLE)
     message("---------Compiling on Linux---------")
-    target_link_libraries(BotMasterXL ${CMAKE_THREAD_LIBS_INIT})
     target_compile_options(BotMasterXL PRIVATE
             -fno-strict-aliasing
             -fwrapv

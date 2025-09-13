@@ -44,6 +44,7 @@ namespace DB {
         const std::string SERVER_ID = "server_id";
         const std::string INVULNERABLE = "invulnerable";
         const std::string SYSTEM_PROMPT = "system_prompt";
+        const std::string PASSWORD = "password";
         const std::string CREATED_AT = "created_at";
     }
     

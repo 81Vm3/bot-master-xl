@@ -13,3 +13,6 @@
 [submodule "lib/sqlite"]
 	path = lib/sqlite
 	url = git@github.com:81Vm3/sqlite.git
+[submodule "lib/win-iconv"]
+	path = lib/win-iconv
+	url = https://github.com/win-iconv/win-iconv

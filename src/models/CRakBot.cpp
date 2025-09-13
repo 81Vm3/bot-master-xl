@@ -16,7 +16,7 @@
 #include "../core/CSharedResourcePool.h"
 #include "../core/CLogger.h"
 #include "../utils/GetTickCount.h"
-#include "../utils/uuid.h"
+#include "../utils/UUIDUtil.h"
 
 #include "../authKey.h"
 #include "utils/ObjectNameUtil.h"
@@ -31,7 +31,7 @@ CRakBot::CRakBot(std::string identifier) : name(identifier), playerID(0xFFFF), s
     setupRPC();
     gameInited = false;
 
-    uuid = UUID::generate_uuid();
+    uuid = UUIDUtil::generate_uuid();
     CLogger::getInstance()->bot->info("[{}:{}] Bot created", name, uuid);
 }
 
@@ -75,6 +75,7 @@ std::string CRakBot::getStatusName() {
         case CONNECTED: return "CONNECTED";
         case WAIT_FOR_JOIN: return "WAIT_FOR_JOIN";
         case SPAWNED: return "SPAWNED";
+        default: return "UNKNOWN";
     }
 }
 

@@ -93,3 +93,4 @@ vendor/
 # Environment files
 .env
 .env.local
+/lib/win-iconv/iconv-g.def
