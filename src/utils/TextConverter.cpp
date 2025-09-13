@@ -27,8 +27,13 @@ std::string TextConverter::gb2312ToUtf8(const char* gb2312_buffer, size_t length
     // Prepare input and output buffers
     size_t in_bytes_left = length;
     size_t out_bytes_left = length * 4; // UTF-8 can be up to 4 bytes per character
-    
+
+#ifdef _WIN32
     const char* in_buf = const_cast<char*>(gb2312_buffer);
+#else
+    char* in_buf = const_cast<char*>(gb2312_buffer);
+#endif
+
     std::vector<char> out_buffer(out_bytes_left);
     char* out_buf = out_buffer.data();
     char* out_buf_start = out_buf;
@@ -110,7 +115,11 @@ std::string TextConverter::utf8ToGb2312(const std::string& utf8_str) {
         size_t out_bytes_left = 6; // Generous buffer for single character
         
         std::string input_copy = utf8_char;
+#ifdef _WIN32
         const char* in_buf = const_cast<char*>(input_copy.c_str());
+#else
+        char* in_buf = const_cast<char*>(input_copy.c_str());
+#endif
         char out_buffer[6] = {0};
         char* out_buf = out_buffer;
         char* out_buf_start = out_buf;
