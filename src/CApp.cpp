@@ -4,6 +4,7 @@
 
 #include "CApp.h"
 
+#include "singal.h"
 #include "core/CAPIServer.h"
 #include "core/CConfig.h"
 #include "core/CSharedResourcePool.h"
@@ -41,9 +42,6 @@ CApp* CApp::getInstance() {
         instance = new CApp();
     }
     return instance;
-}
-
-void CApp::run() {
 }
 
 CConfig * CApp::getConfig() {
@@ -170,7 +168,8 @@ void CApp::init() {
         CLogger::getInstance()->system->info("[PHYSICS] No collision data found!");
     }
 
-    CLogger::getInstance()->system->info("[INIT]: Application initialization completed successfully");
+    if (g_running)
+        CLogger::getInstance()->system->info("[INIT]: Application initialization completed successfully");
 }
 
 CApp::~CApp() {

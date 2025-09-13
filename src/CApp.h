@@ -45,7 +45,6 @@ private:
 
 public:
     static CApp* getInstance();
-    void run();
     void init();
 
     CConfig* getConfig();
