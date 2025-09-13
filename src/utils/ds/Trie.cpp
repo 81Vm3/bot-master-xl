@@ -27,10 +27,13 @@ const std::vector<std::byte>* Trie::find(const char* s, int l) {
     int p = 0;
     for (int i = 0; i < l; i++) {
         int c = s[i] - 'a';
-        if (!nex[p][c]) {};
+        if (!nex[p][c]) return nullptr;
         p = nex[p][c];
     }
-    return data[p].get();
+    if (exist[p] && data.count(p)) {
+        return data[p].get();
+    }
+    return nullptr;
 }
 
 const std::vector<std::byte>* Trie::find(const std::string& s) {
