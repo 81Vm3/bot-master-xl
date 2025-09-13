@@ -23,6 +23,7 @@ public:
     int api_port;
     eConnectionPolicy connection_policy;
     std::string base_internal_prompt;
+    std::string message_encoding;
 
     nlohmann::json toJson() const;
     void fromJson(const nlohmann::json& j);

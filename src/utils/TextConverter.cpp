@@ -8,6 +8,9 @@
 #include <cstring>
 #include <spdlog/spdlog.h>
 
+#include "CApp.h"
+#include "core/CConfig.h"
+
 std::string TextConverter::gb2312ToUtf8(const std::string& gb2312_str) {
     return gb2312ToUtf8(gb2312_str.c_str(), gb2312_str.length());
 }
@@ -17,10 +20,11 @@ std::string TextConverter::gb2312ToUtf8(const char* gb2312_buffer, size_t length
         return "";
     }
     
-    // Open iconv descriptor for GBK to UTF-8 conversion
-    iconv_t cd = iconv_open("UTF-8", "GBK");
+    // Open iconv descriptor to UTF-8 conversion
+    std::string encoding = CApp::getInstance()->getConfig()->message_encoding;
+    iconv_t cd = iconv_open("UTF-8", encoding.c_str());
     if (cd == (iconv_t)-1) {
-        spdlog::error("Failed to open iconv descriptor for GBK->UTF-8: {}", strerror(errno));
+        spdlog::error("Failed to open iconv descriptor for {}->UTF-8: {}", encoding, strerror(errno));
         return std::string(gb2312_buffer, length); // Return original if conversion fails
     }
     
@@ -64,7 +68,8 @@ std::string TextConverter::utf8ToGb2312(const std::string& utf8_str) {
     result.reserve(utf8_str.length() * 2);
     
     // Open iconv descriptor for UTF-8 to GBK conversion
-    iconv_t cd = iconv_open("GBK//IGNORE", "UTF-8");
+    std::string encoding = CApp::getInstance()->getConfig()->message_encoding + "//IGNORE";
+    iconv_t cd = iconv_open(encoding.c_str(), "UTF-8");
     if (cd == (iconv_t)-1) {
         // If iconv fails to open, fall back to ASCII-only filtering
         spdlog::warn("Failed to open iconv descriptor, using ASCII fallback");
@@ -220,7 +225,7 @@ std::vector<uint8_t> TextConverter::gb2312CharToUtf8(uint16_t gb2312_char) {
     // For a complete implementation, you would need the full GB2312 to Unicode mapping table
     std::vector<uint8_t> result;
     
-    // Convert GBK character using iconv
+    // Convert character using iconv
     char gb_bytes[3] = {0};
     if (gb2312_char > 0xFF) {
         gb_bytes[0] = (gb2312_char >> 8) & 0xFF;
