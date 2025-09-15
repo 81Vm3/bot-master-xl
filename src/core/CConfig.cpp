@@ -9,7 +9,8 @@
 CConfig::CConfig() :
     api_port(7070),
     connection_policy(eConnectionPolicy::QUEUED),
-    message_encoding("GBK") {
+    message_encoding("GBK"),
+    enable_colandreas(true) {
 }
 
 bool CConfig::loadConfigFile(const std::string &filename) {
@@ -77,6 +78,7 @@ nlohmann::json CConfig::toJson() const {
     j["api_port"] = api_port;
     j["connection_policy"] = connection_policy;
     j["message_encoding"] = message_encoding;
+    j["enable_colandreas"] = enable_colandreas;
     return j;
 }
 
@@ -84,4 +86,5 @@ void CConfig::fromJson(const nlohmann::json &j) {
     api_port = j["api_port"];
     connection_policy = j["connection_policy"];
     message_encoding =  j["message_encoding"];
+    enable_colandreas = j["enable_colandreas"];
 }

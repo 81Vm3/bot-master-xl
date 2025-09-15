@@ -5,6 +5,7 @@ bin/BotMasterXL
 bin/data/bmXL.db
 libhv.*.log
 .claude
+bin/data/dist.zip
 
 # CMake generated files
 CMakeCache.txt

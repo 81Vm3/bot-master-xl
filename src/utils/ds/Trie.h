@@ -31,6 +31,9 @@ public:
     
     const std::vector<std::byte>* find(const char* s, int l);
     const std::vector<std::byte>* find(const std::string& s);
+    
+    // Debug helper to list all keys
+    void debug_print_keys();
 };
 
 #endif //BOTMASTERXL_TRIE_H

@@ -30,6 +30,7 @@ file(GLOB_RECURSE HEADERS
 add_subdirectory(lib/RakNet)
 add_subdirectory(lib/glm)
 add_subdirectory(lib/spdlog)
+add_subdirectory(lib/miniz)
 
 # Enable SSL for libhv
 #add_definitions(-DWITH_OPENSSL)
@@ -72,6 +73,7 @@ target_include_directories(BotMasterXL PRIVATE
         lib/spdlog/include
         lib/sqlite
         lib/bullet/src
+        lib/miniz
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -92,6 +94,7 @@ target_link_libraries(BotMasterXL
         BulletCollision
         LinearMath
         Bullet3Common
+        miniz
 )
 target_compile_options(BotMasterXL PRIVATE -static -static-libgcc -static-libstdc++ -O2)
 target_link_options(BotMasterXL PRIVATE -static -static-libgcc -static-libstdc++)

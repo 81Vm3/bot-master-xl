@@ -21,9 +21,12 @@ public:
     bool loadBaseInternalPrompt(const std::string& filename);
 
     int api_port;
+    int web_port;
+    bool enable_webserver;
     eConnectionPolicy connection_policy;
     std::string base_internal_prompt;
     std::string message_encoding;
+    bool enable_colandreas;
 
     nlohmann::json toJson() const;
     void fromJson(const nlohmann::json& j);

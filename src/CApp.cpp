@@ -105,7 +105,7 @@ void CApp::init() {
         CLogger::getInstance()->system->error("[CONFIG]: Failed to load configuration");
     }
 
-    CLogger::getInstance()->system->info("[API]: Starting API server");
+    CLogger::getInstance()->system->info("[API]: Starting API server with static file serving");
     pAPIServer = std::make_unique<CAPIServer>();
     pAPIServer->start_async();
     CLogger::getInstance()->system->info("[API]: API server started successfully");
@@ -158,14 +158,16 @@ void CApp::init() {
     pColAndreasWorld = new ColAndreasWorld;
     collisionWorld = pColAndreasWorld;
 
-    CLogger::getInstance()->system->info("[PHYSICS] Loading collision data.");
-    if (collisionWorld->loadCollisionData()) {
-        CLogger::getInstance()->system->info("[PHYSICS] Initializing collision map...");
-        collisionWorld->colandreasInitMap();
-        CLogger::getInstance()->system->info("[PHYSICS] Collision map initialized successfully");
-        colDataLoaded = true;
-    } else {
-        CLogger::getInstance()->system->info("[PHYSICS] No collision data found!");
+    if (pConfig->enable_colandreas) {
+        CLogger::getInstance()->system->info("[PHYSICS] Loading collision data.");
+        if (collisionWorld->loadCollisionData()) {
+            CLogger::getInstance()->system->info("[PHYSICS] Initializing collision map...");
+            collisionWorld->colandreasInitMap();
+            CLogger::getInstance()->system->info("[PHYSICS] Collision map initialized successfully");
+            colDataLoaded = true;
+        } else {
+            CLogger::getInstance()->system->info("[PHYSICS] No collision data found!");
+        }
     }
 
     if (g_running)

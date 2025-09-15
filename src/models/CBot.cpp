@@ -20,6 +20,7 @@
 #include "spdlog/formatter.h"
 #include "utils/map_zones.h"
 #include "../physics/CPathFinder.h"
+#include "core/CConfig.h"
 #include "physics/Raycast.h"
 
 CBot::CBot(std::string identifier) : CRakBot(identifier) {
@@ -372,6 +373,12 @@ void CBot::updateOnfoot() {
 }
 
 void CBot::go_with_path(const glm::vec3& destination, int iType, float fSpeed) {
+    // if colandreas is disabled manually, just go with no pathfinding
+    if (CApp::getInstance()->getConfig()->enable_colandreas == false) {
+        go(destination, iType, 0.0, true, fSpeed, 0, 0);
+        return;
+    }
+
     // Clear any existing movepath first
     clearMovepath();
 

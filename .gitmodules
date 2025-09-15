@@ -16,3 +16,6 @@
 [submodule "lib/win-iconv"]
 	path = lib/win-iconv
 	url = https://github.com/win-iconv/win-iconv
+[submodule "lib/miniz"]
+	path = lib/miniz
+	url = https://github.com/richgel999/miniz
