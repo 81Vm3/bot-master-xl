@@ -43,7 +43,7 @@ BotMasterXL是一个基于大语言模型(LLM)的高级Bot矩阵框架 (Proof of
 ### 部署
 
 1. 下载本仓库Release的最新版本
-2. 添加ColAndreas文件 (可选)，用于检测地图碰撞，放入 `data/ColAndreas.cadb`
+2. 添加[ColAndreas文件](https://raw.githubusercontent.com/81Vm3/bot-master-xl/refs/heads/master/ColAndreasDB/ColAndreas.cadb) (可选)，用于检测地图碰撞，放入 `data/ColAndreas.cadb`
 3. 在 `data/config.json` 中调整编码，默认为 GBK，如果需要连接俄语服务器，则需要修改对应的编码
 4. 启动BotMasterXL
 5. 打开浏览器 http://localhost:7070/web 查看主页

@@ -43,7 +43,7 @@ The project combines C++17, network programming, ColAndreas integration, and art
 ### Deployment
 
 1. Download the latest version from the repository's Release
-2. Add ColAndreas files (optional), for map collision detection, place in `data/ColAndreas.cadb`
+2. Add [ColAndreas files](https://raw.githubusercontent.com/81Vm3/bot-master-xl/refs/heads/master/ColAndreasDB/ColAndreas.cadb) (optional), for map collision detection, place in `data/ColAndreas.cadb`
 3. Adjust encoding in `data/config.json`, default is GBK, if you need to connect to Russian servers, you need to modify the corresponding encoding
 4. Start BotMasterXL
 5. Open browser at http://localhost:7070/web to view the homepage
