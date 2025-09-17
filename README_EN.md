@@ -44,16 +44,24 @@ The project combines C++17, network programming, ColAndreas integration, and art
 
 1. Download the latest version from the repository's Release
 2. Add ColAndreas files (optional), for map collision detection, place in `data/ColAndreas.cadb`
-3. Start BotMasterXL
-4. Open browser at http://localhost:7070/web to view the homepage
+3. Adjust encoding in `data/config.json`, default is GBK, if you need to connect to Russian servers, you need to modify the corresponding encoding
+4. Start BotMasterXL
+5. Open browser at http://localhost:7070/web to view the homepage
 
-### Adding Bots
+### Adding Bots and LLM
 
 To add a bot, you first need to add a server in the management panel.
 
 After adding the server, go to the bot page and create a new bot.
 
 The bot's password is used for server login or registration. It's optional, and if filled, the password will be passed to the LLM.
+
+The LLM API address needs to be of completions type, examples below:
+```
+OpenAI: https://api.openai.com/v1/completions
+Deepseek: https://api.deepseek.com/chat/completions
+Qwen: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+```
 
 ### Prompts
 

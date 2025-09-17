@@ -44,16 +44,24 @@ BotMasterXL是一个基于大语言模型(LLM)的高级Bot矩阵框架 (Proof of
 
 1. 下载本仓库Release的最新版本
 2. 添加ColAndreas文件 (可选)，用于检测地图碰撞，放入 `data/ColAndreas.cadb`
-3. 启动BotMasterXL
-4. 打开浏览器 http://localhost:7070/web 查看主页
+3. 在 `data/config.json` 中调整编码，默认为 GBK，如果需要连接俄语服务器，则需要修改对应的编码
+4. 启动BotMasterXL
+5. 打开浏览器 http://localhost:7070/web 查看主页
 
-### 添加Bot
+### 添加Bot和LLM
 
 要添加bot, 首先需要在管理面板中添加服务器
 
 添加服务器后，前往bot页面，新建bot。
 
 bot的密码用于处理服务器登录或注册。为可选项，如果填写密码将会把密码传给LLM
+
+LLM的api地址需要为completions类型 ，例子如下
+```
+OpenAI: https://api.openai.com/v1/completions
+Deepseek: https://api.deepseek.com/chat/completions
+Qwen: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+```
 
 ### 提示词
 
