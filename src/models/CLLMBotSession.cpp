@@ -49,6 +49,14 @@ void CLLMBotSession::setActionCooldown(const std::string &action) {
 
 void CLLMBotSession::deactivate() {
     is_active = false;
+    is_idle_waiting_llm = false;  // Cancel any pending LLM operations
+    
+    // Clear session data to prevent memory leaks
+    conversation_history.clear();
+    action_cooldowns.clear();
+    
+    // Clear bot reference to break circular references
+    bot.reset();
 }
 
 json CLLMBotSession::toJson() const {
@@ -139,18 +147,31 @@ void CLLMBotSession::performAutonomousUpdate() {
     // 4. 标记为等待中
     is_idle_waiting_llm = true;
 
-    // 5. 异步调用
+    // 5. 异步调用 - use weak_ptr to avoid holding reference
     using namespace std::placeholders;
+    std::weak_ptr<CBot> weak_bot = bot;
+    // weak_bot is captured by lambda function, if we ues shared_ptr it will persist even after we deleted the bot instance
+    // in case of the llm connection is active
     dispatcher->callLLMWithFunctionsAsync(
         messages,
         llm_provider,
-        std::bind(&CLLMBotSession::processLLMCallback, this, _1, _2, _3),
+        [this, weak_bot](const json& response, const std::string& result_type, const json& function_results) {
+            // Check if bot is still alive
+            if (auto locked_bot = weak_bot.lock()) {
+                processLLMCallback(response, result_type, function_results);
+            }
+        },
         session_id
     );
 
 }
 
 void CLLMBotSession::processLLMCallback(const json &response, const std::string &result_type, const json &function_results) {
+
+    // Check if session is still active - prevent use after deactivation
+    if (!is_active) {
+        return;
+    }
 
     // 解除等待
     is_idle_waiting_llm = false;

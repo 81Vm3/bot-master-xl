@@ -53,8 +53,6 @@ public:
         std::string last_activity;
     };
     
-    std::vector<LLMSessionData> loadActiveLLMSessions();
-    
     // SQLite query execution wrapper
     template<typename CallbackType>
     bool executeQuery(const std::string& query, CallbackType callback, const std::string& errorContext = "") {

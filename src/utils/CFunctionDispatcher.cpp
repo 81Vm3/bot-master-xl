@@ -155,6 +155,13 @@ void CFunctionDispatcher::callLLMWithFunctionsAsync(const std::vector<json>& mes
 
     // Use member HTTP client
     http_client.sendAsync(req, [this, callback, session_id](const HttpResponsePtr& resp) {
+        // Check if session is still active before processing callback
+        auto sessionManager = CApp::getInstance()->getLLMSessionManager();
+        if (!session_id.empty() && sessionManager && !sessionManager->hasSession(session_id)) {
+            // Session was deleted/deactivated, ignore callback
+            return;
+        }
+        
         if (!resp) {
             callback(json{{"error", "Failed to send request to LLM API"}}, "", {});
             return;

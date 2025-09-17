@@ -25,7 +25,10 @@ public:
 
     // === Construction/Destruction ===
     CRakBot(std::string identifier);
+    CRakBot(std::string identifier, std::string uuid);
     virtual ~CRakBot();
+
+    void init();
 
     // === Connection Management ===
     void connect(std::string host, unsigned short port);

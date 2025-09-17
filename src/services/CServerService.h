@@ -17,6 +17,7 @@ private:
     static int delete_server(HttpRequest* req, HttpResponse* resp);
     static int add_server(HttpRequest* req, HttpResponse* resp);
     static int list_servers(HttpRequest* req, HttpResponse* resp);
+    static int query_server(HttpRequest* req, HttpResponse* resp);
 };
 
 

@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "utils/ObjectNameUtil.h"
+#include "utils/VehicleNameUtil.h"
 #include "utils/weapon_config.h"
 
 // Helper function to round a float to two decimal places
@@ -32,7 +33,7 @@ std::vector<tool> SituationAwarenessTools::createAllTools() {
                 json vehicle_element = {
                     {"id", vehicle.id},
                     {"model_id", vehicle.model},
-                    {"model_name", CApp::getInstance()->getObjectNameUtil()->getObjectName(vehicle.model)},
+                    {"model_name", VehicleNameUtil::getVehicleName(vehicle.model)},
                     {"position", {{"x", round_to_two_places(vehicle.position.x)}, {"y", round_to_two_places(vehicle.position.y)}, {"z", round_to_two_places(vehicle.position.z)}}},
                     {"velocity", {{"x", round_to_two_places(vehicle.velocity.x)}, {"y", round_to_two_places(vehicle.velocity.y)}, {"z", round_to_two_places(vehicle.velocity.z)}}},
                     {"health", round_to_two_places(vehicle.health)}

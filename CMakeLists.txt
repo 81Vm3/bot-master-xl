@@ -27,13 +27,26 @@ file(GLOB_RECURSE HEADERS
 )
 
 # 添加库
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # For MinGW cross-compilation, set OpenSSL paths manually
+    set(OPENSSL_ROOT_DIR /usr/x86_64-w64-mingw32)
+    set(OPENSSL_INCLUDE_DIR /usr/x86_64-w64-mingw32/include)
+    set(OPENSSL_CRYPTO_LIBRARY /usr/x86_64-w64-mingw32/lib/libcrypto.a)
+    set(OPENSSL_SSL_LIBRARY /usr/x86_64-w64-mingw32/lib/libssl.a)
+elseif(UNIX AND NOT APPLE)
+    # For Linux static linking, set OpenSSL paths manually
+    set(OPENSSL_CRYPTO_LIBRARY /usr/lib/x86_64-linux-gnu/libcrypto.a)
+    set(OPENSSL_SSL_LIBRARY /usr/lib/x86_64-linux-gnu/libssl.a)
+endif ()
+find_package(OpenSSL REQUIRED)
 add_subdirectory(lib/RakNet)
 add_subdirectory(lib/glm)
 add_subdirectory(lib/spdlog)
 add_subdirectory(lib/miniz)
 
 # Enable SSL for libhv
-#add_definitions(-DWITH_OPENSSL)
+add_definitions(-DWITH_OPENSSL)
 add_subdirectory(lib/libhv)
 add_subdirectory(lib/sqlite)
 
@@ -95,6 +108,8 @@ target_link_libraries(BotMasterXL
         LinearMath
         Bullet3Common
         miniz
+        OpenSSL::SSL
+        OpenSSL::Crypto
 )
 target_compile_options(BotMasterXL PRIVATE -static -static-libgcc -static-libstdc++ -O2)
 target_link_options(BotMasterXL PRIVATE -static -static-libgcc -static-libstdc++)

@@ -19,11 +19,30 @@
 #include "../utils/UUIDUtil.h"
 
 #include "../authKey.h"
+#include "hv/json.hpp"
 #include "utils/ObjectNameUtil.h"
 #include "utils/TextConverter.h"
 
 CRakBot::CRakBot(std::string identifier) : name(identifier), playerID(0xFFFF), status(DISCONNECTED),
                                            reconnect_tick(0), update_tick(0) {
+    uuid = UUIDUtil::generate_uuid();
+    init();
+}
+
+CRakBot::CRakBot(std::string identifier, std::string uuid) : name(identifier), playerID(0xFFFF), status(DISCONNECTED),
+                                           reconnect_tick(0), update_tick(0) {
+    this->uuid = uuid;
+    init();
+}
+
+CRakBot::~CRakBot() {
+    if (status != DISCONNECTED) {
+        disconnect();
+    }
+    CLogger::getInstance()->bot->info("[{}] Bot destroyed", name);
+}
+
+void CRakBot::init() {
     client.SetMTUSize(MTU_SIZE);
     client.SetOccasionalPing(false);
     client.SetIncomingPassword(nullptr, 0);
@@ -31,15 +50,7 @@ CRakBot::CRakBot(std::string identifier) : name(identifier), playerID(0xFFFF), s
     setupRPC();
     gameInited = false;
 
-    uuid = UUIDUtil::generate_uuid();
     CLogger::getInstance()->bot->info("[{}:{}] Bot created", name, uuid);
-}
-
-CRakBot::~CRakBot() {
-    if (status != DISCONNECTED) {
-        disconnect();
-    }
-    CLogger::getInstance()->bot->info("[{}:{}] Bot destroyed", name, uuid);
 }
 
 void CRakBot::resetConnectionStatus() {

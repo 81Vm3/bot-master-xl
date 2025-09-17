@@ -3,7 +3,7 @@ LABEL authors="rain"
 
 WORKDIR /app
 
-EXPOSE 7071
+EXPOSE 7070
 
 COPY ./bin/BotMasterXL /app/BotMasterXL
 COPY ./bin/data /app/data/

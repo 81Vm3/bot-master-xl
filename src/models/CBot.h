@@ -43,7 +43,10 @@ public:
 
     // === Construction/Destruction ===
     CBot(std::string identifier);
+    CBot(std::string identifier, std::string uuid);
     ~CBot();
+
+    void init();
 
     // === Configuration ===
     std::string getPassword() const;

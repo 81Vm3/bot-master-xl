@@ -8,6 +8,8 @@
 #include "../database/DBSchema.h"
 #include <spdlog/spdlog.h>
 
+#include "Bullet3OpenCL/RigidBody/kernels/solverUtils.h"
+
 CServerQuerier::CServerQuerier() 
     : pDataStorage(nullptr), running(false), queryInterval(std::chrono::seconds(30)) {
 }
@@ -130,7 +132,6 @@ void CServerQuerier::queryServer(CServer* server) {
     if (!server) {
         return;
     }
-    
     // Query server info asynchronously
     server->queryServerInfoAsync([this, server](bool success) {
         if (success) {
@@ -144,17 +145,14 @@ void CServerQuerier::queryServer(CServer* server) {
             if (onServerUpdated) {
                 onServerUpdated(server);
             }
-            
-            spdlog::debug("Server {}:{} updated successfully - Players: {}/{}", 
-                         server->getHost(), server->getPort(), 
-                         server->getPlayers(), server->getMaxPlayers());
+
         } else {
             // Call offline callback if set
             if (onServerOffline) {
                 onServerOffline(server);
             }
-            
-            spdlog::debug("Server {}:{} is offline or unreachable", 
+
+            spdlog::debug("Server {}:{} is offline or unreachable",
                          server->getHost(), server->getPort());
         }
     });

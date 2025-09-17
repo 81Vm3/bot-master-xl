@@ -26,7 +26,7 @@ std::string CLLMBotSessionManager::createSession(std::shared_ptr<CBot> bot, std:
     auto session = std::make_unique<CLLMBotSession>(session_id, bot, llm_provider);
     
     sessions[session_id] = std::move(session);
-    botSessionMap[session_id] = bot->getUuid();
+    botSessionMap[bot->getUuid()] = session_id;
     
     CLogger::getInstance()->llm->info("Created LLM bot session {} for bot {} with provider {}",
                  session_id.c_str(), 
@@ -35,57 +35,20 @@ std::string CLLMBotSessionManager::createSession(std::shared_ptr<CBot> bot, std:
     return session_id;
 }
 
-void CLLMBotSessionManager::loadSessionsFromDatabase() {
-    std::lock_guard<std::mutex> lock(sessions_mutex);
-    
-    auto database = CApp::getInstance()->getDatabase();
-    if (!database) {
-        spdlog::error("Database not available for loading sessions");
-        return;
+void CLLMBotSessionManager::restoreSession(const std::string &session_id, std::unique_ptr<CLLMBotSession> session) {
+    if (sessions.find(session_id) == sessions.end() && session && session->bot) {
+        std::string bot_uuid = session->bot->getUuid();
+        botSessionMap[bot_uuid] = session_id;
+        // Save session info before moving
+        auto msg = fmt::format("Restored LLM bot session {} for bot {}",
+                 session_id.c_str(),
+                 session->bot->getName(),
+                 session->llm_provider->getName());
+        sessions[session_id] = std::move(session);
+        CLogger::getInstance()->llm->info(msg);
+    } else {
+        spdlog::warn("Failed to restore session {}: invalid session or bot", session_id);
     }
-    
-    // Load active sessions from database
-    auto sessionDataList = database->loadActiveLLMSessions();
-    
-    for (const auto& sessionData : sessionDataList) {
-        try {
-            // Find the bot by UUID
-            auto bot = database->botsByUuid.find(sessionData.bot_uuid);
-            if (bot == database->botsByUuid.end()) {
-                spdlog::warn("Bot with UUID {} not found for session {}, skipping", 
-                           sessionData.bot_uuid, sessionData.session_id);
-                continue;
-            }
-            
-            // Find the LLM provider by ID
-            auto provider = database->llmProvidersById.find(sessionData.provider_id);
-            if (provider == database->llmProvidersById.end()) {
-                spdlog::warn("LLM provider with ID {} not found for session {}, skipping", 
-                           sessionData.provider_id, sessionData.session_id);
-                continue;
-            }
-            
-            // Create the session
-            auto session = std::make_unique<CLLMBotSession>(sessionData.session_id, bot->second, provider->second);
-            
-            // Restore the session state
-            session->is_active = sessionData.is_active;
-            
-            // Store the session
-            sessions[sessionData.session_id] = std::move(session);
-            botSessionMap[sessionData.session_id] = sessionData.bot_uuid;
-            
-            spdlog::info("Restored LLM session {} for bot {} with provider {}", 
-                        sessionData.session_id, 
-                        sessionData.bot_uuid, 
-                        provider->second->getName());
-            
-        } catch (const std::exception& e) {
-            spdlog::error("Error restoring session {}: {}", sessionData.session_id, e.what());
-        }
-    }
-    
-    spdlog::info("Loaded {} LLM sessions from database", sessionDataList.size());
 }
 
 CLLMBotSession* CLLMBotSessionManager::getSession(const std::string& session_id) {
@@ -103,10 +66,13 @@ bool CLLMBotSessionManager::endSession(const std::string& session_id) {
     
     auto it = sessions.find(session_id);
     if (it != sessions.end()) {
+        if (it->second->bot) {
+            std::string bot_uuid = it->second->bot->getUuid();
+            botSessionMap.erase(bot_uuid);
+        }
         it->second->deactivate();
         sessions.erase(it);
-        botSessionMap.erase(session_id);
-        spdlog::info("Ended LLM bot session: %s", session_id.c_str());
+        spdlog::info("Ended LLM bot session: {}", session_id.c_str());
         return true;
     }
     return false;
@@ -244,7 +210,7 @@ void CLLMBotSessionManager::asyncUpdateLoop() {
 }
 
 void CLLMBotSessionManager::processSessionUpdate(CLLMBotSession* session) {
-    if (!session || !session->bot) {
+    if (!session || !session->bot || !session->is_active) {
         return;
     }
     
@@ -278,12 +244,11 @@ CBot* CLLMBotSessionManager::getBotFromLLMSession(const std::string& session_id)
 
 CLLMBotSession* CLLMBotSessionManager::getLLMSessionFromBot(const std::string& bot_uuid) const {
     std::lock_guard<std::mutex> lock(sessions_mutex);
-    for (const auto& [session_id, uuid] : botSessionMap) {
-        if (uuid == bot_uuid) {
-            auto it = sessions.find(session_id);
-            if (it != sessions.end() && it->second->is_active) {
-                return it->second.get();
-            }
+    auto it = botSessionMap.find(bot_uuid);
+    if (it != botSessionMap.end()) {
+        auto session_it = sessions.find(it->second);
+        if (session_it != sessions.end() && session_it->second->is_active) {
+            return session_it->second.get();
         }
     }
     return nullptr;

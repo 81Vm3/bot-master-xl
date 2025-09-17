@@ -131,12 +131,12 @@ private:
     std::vector<unsigned char> createSampPacket(PacketType packetType, const std::string& rconPassword = "", const std::string& command = "");
     bool sendUdpPacketSync(const std::vector<unsigned char>& packet, std::vector<unsigned char>& response);
     void sendUdpPacketAsync(const std::vector<unsigned char>& packet, std::function<void(const std::vector<unsigned char>&)> callback);
-    
+
     bool parseServerInfoResponse(const std::vector<unsigned char>& data);
     bool parseServerPlayersResponse(const std::vector<unsigned char>& data);
     bool parseServerRulesResponse(const std::vector<unsigned char>& data);
     std::string parseRconResponse(const std::vector<unsigned char>& data);
-    
+
     // Utility methods
     std::string readStringFromBuffer(const unsigned char*& buffer, int length);
     unsigned short readUInt16FromBuffer(const unsigned char*& buffer);
@@ -146,3 +146,4 @@ private:
 };
 
 #endif //CSERVER_H
+

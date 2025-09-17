@@ -15,15 +15,24 @@
 #include "../utils/defines.h"
 #include "../utils/weapon_config.h"
 #include "../utils/TextConverter.h"
-#include "../core/CLogger.h"
 #include "core/CSharedResourcePool.h"
-#include "spdlog/formatter.h"
 #include "utils/map_zones.h"
 #include "../physics/CPathFinder.h"
 #include "core/CConfig.h"
 #include "physics/Raycast.h"
 
 CBot::CBot(std::string identifier) : CRakBot(identifier) {
+    init();
+}
+
+CBot::CBot(std::string identifier, std::string uuid) : CRakBot(identifier, uuid){
+    init();
+}
+
+CBot::~CBot() {
+}
+
+void CBot::init() {
     memset(&data_onfoot, 0, sizeof(stOnFootData));
     position = glm::vec3(0.0f);
     velocity = glm::vec3(0.0f);
@@ -34,21 +43,21 @@ CBot::CBot(std::string identifier) : CRakBot(identifier) {
     invulnerable = false;
     flag = 0;
     deathTick = 0;
-    
+
     // Initialize pathfinder
     pathFinder = std::make_shared<CPathFinder>();
-    
+
     // Initialize dialog system
     dialogActive = false;
     dialogID = 0;
     dialogStyle = 0;
-    
+
     // Initialize movepath system
     currentWaypointIndex = 0;
     movepathStatus = MOVEPATH_INACTIVE;
     movepathLooping = false;
     waypointReached = false;
-    
+
     // Initialize movement data
     m_iMovePath = 0;
     m_iMovePoint = 0;
@@ -68,9 +77,6 @@ CBot::CBot(std::string identifier) : CRakBot(identifier) {
     m_dwMoveTime = 0;
     m_dwMoveStopDelay = 0;
     m_dwMoveTickCount = 0;
-}
-
-CBot::~CBot() {
 }
 
 std::string CBot::getPassword() const {

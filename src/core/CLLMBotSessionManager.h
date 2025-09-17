@@ -39,7 +39,8 @@ public:
 
     // LLM会话管理
     std::string createSession(std::shared_ptr<CBot> bot, std::shared_ptr<CLLMProvider> llm_provider);
-    void loadSessionsFromDatabase();
+    void restoreSession(const std::string& uuid, std::unique_ptr<CLLMBotSession> session);
+
     CLLMBotSession* getSession(const std::string& session_id);
     bool endSession(const std::string& session_id);
     void cleanupExpiredSessions();

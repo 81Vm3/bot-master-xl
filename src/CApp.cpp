@@ -110,6 +110,10 @@ void CApp::init() {
     pAPIServer->start_async();
     CLogger::getInstance()->system->info("[API]: API server started successfully");
 
+    CLogger::getInstance()->system->info("[LLM]: Initializing LLM bot session manager");
+    pLLMSessionManager = std::make_unique<CLLMBotSessionManager>();
+    CLogger::getInstance()->system->info("[LLM]: LLM bot session manager initialized");
+
     CLogger::getInstance()->system->info("[DATABASE]: Initializing persistent data storage");
     pDataStorage = std::make_unique<CPersistentDataStorage>();
     if (pDataStorage->loadDatabase()) {
@@ -133,10 +137,6 @@ void CApp::init() {
     CLogger::getInstance()->system->info("[RESOURCE]: Initializing resource manager");
     pResourceManager = std::make_unique<CSharedResourcePool>();
     CLogger::getInstance()->system->info("[RESOURCE]: Resource manager initialized");
-
-    CLogger::getInstance()->system->info("[LLM]: Initializing LLM bot session manager");
-    pLLMSessionManager = std::make_unique<CLLMBotSessionManager>();
-    CLogger::getInstance()->system->info("[LLM]: LLM bot session manager initialized");
     
     CLogger::getInstance()->system->info("[OBJECTS]: Initializing object name utility");
     pObjectNameUtil = std::make_unique<ObjectNameUtil>();

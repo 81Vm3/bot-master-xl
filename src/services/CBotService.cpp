@@ -71,6 +71,13 @@ int CBotService::list_bots(HttpRequest* req, HttpResponse* resp) {
                 }
             }
             
+            // Get connection status from memory
+            bool connected = false;
+            auto bot_it = database->botsByUuid.find(uuid);
+            if (bot_it != database->botsByUuid.end()) {
+                connected = bot_it->second->isConnected();
+            }
+            
             json bot = {
                 {"uuid", uuid},
                 {"name", reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1))},
@@ -78,7 +85,8 @@ int CBotService::list_bots(HttpRequest* req, HttpResponse* resp) {
                 {"invulnerable", sqlite3_column_int(stmt, 3) == 1},
                 {"system_prompt", reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4))},
                 {"created_at", reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5))},
-                {"has_llm_session", has_llm_session}
+                {"has_llm_session", has_llm_session},
+                {"connected", connected}
             };
             // Add session_id if the bot has an active session
             if (has_llm_session && !session_id.empty()) {
@@ -677,6 +685,6 @@ bool CBotService::deleteLLMSessionForBot(const std::string& botUuid) {
         return false;
     }
     
-    CLogger::getInstance()->api->info("Successfully deleted LLM session {} for bot {}", sessionId, botUuid);
+    //CLogger::getInstance()->api->info("Successfully deleted LLM session {} for bot {}", sessionId, botUuid);
     return true;
 }

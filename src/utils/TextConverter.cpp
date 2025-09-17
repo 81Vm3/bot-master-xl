@@ -214,10 +214,9 @@ std::string TextConverter::ensureUtf8(const std::string& input) {
         return converted;
     }
     
-    // If all else fails, return original (might be already UTF-8 with some encoding issues)
-    spdlog::warn("Could not determine encoding for string, returning as-is");
-    spdlog::info(input);
-    return input;
+    // If all else fails, return empty string to ensure UTF-8 compliance
+    spdlog::warn("Could not convert string to UTF-8, returning empty string");
+    return "";
 }
 
 std::vector<uint8_t> TextConverter::gb2312CharToUtf8(uint16_t gb2312_char) {
